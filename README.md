@@ -299,3 +299,62 @@ Com as escolhas atuais de hiperparâmetros, pode-se ver que o limite de três de
 ```
 sagemaker.Session().delete_endpoint(rcf_inference.endpoint)
 ```
+
+import pandas as pd
+import boto3
+import sagemaker
+
+# Exemplo de carregamento de um dataset CSV
+data = pd.read_csv('s3://meu-bucket-meus-dados/dataset.csv')
+
+# Exemplo de pré-processamento de dados
+data = data.dropna()  # Remove linhas com valores nulos
+
+# Criando o cliente S3
+s3 = boto3.client('s3')
+
+# Salvando o dataset transformado de volta para o S3
+data.to_csv('/tmp/processed_data.csv')
+s3.upload_file('/tmp/processed_data.csv', 'meu-bucket-meus-dados', 'processed_data.csv')
+
+
+# Defina o bucket e o caminho de prefixo
+sagemaker_session = sagemaker.Session()
+bucket = 'meu-bucket-meus-dados'
+prefix = 'meu-prefixo'
+import sqlite3
+
+{
+   "Effect": "Allow",
+   "Action": [
+   
+     "s3:GetObject",
+     "s3:PutObject"
+   ],
+   "Resource": "arn:aws:s3:::meu-bucket-meus-dados/*"
+}
+
+# Conectar a um banco de dados (ou criar)
+conn = sqlite3.connect('meu_banco_de_dados.db')
+
+# Criar um cursor para executar comandos SQL
+cursor = conn.cursor()
+
+# Criar uma tabela
+cursor.execute('''
+CREATE TABLE dados (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    valor REAL
+)
+''')
+
+# Inserir dados na tabela
+cursor.execute('''
+INSERT INTO dados (nome, valor)
+VALUES ('item1', 10.5)
+''')
+
+# Salvar e fechar
+conn.commit()
+conn.close()
